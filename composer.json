@@ -11,7 +11,10 @@
         "laravel/tinker": "^3.0"
     },
     "config": {
-        "platform-check": false
+        "platform-check": false,
+        "platform": {
+            "php": "8.2.30"
+        }
     },
     "autoload": {
         "psr-4": {
