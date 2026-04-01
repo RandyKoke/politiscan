@@ -2,7 +2,6 @@ import { defineConfig } from 'vite'
 import laravel from 'laravel-vite-plugin'
 import vue from '@vitejs/plugin-vue'
 
-// config Vite avec support Vue
 export default defineConfig({
     plugins: [
         laravel({
@@ -15,6 +14,9 @@ export default defineConfig({
         alias: {
             'vue': 'vue/dist/vue.esm-bundler.js'
         }
+    },
+    build: {
+        outDir: 'public/build',
+        emptyOutDir: true,
     }
 })
-
