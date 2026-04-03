@@ -8,7 +8,7 @@ class QuestionController extends Controller
 {
     public function index()
     {
-        // On renvoie toutes les questions
+        // On renvoie ici toutes les questions
         return response()->json(Question::all());
     }
 }

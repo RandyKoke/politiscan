@@ -5,21 +5,25 @@
     <div v-if="loading">Calcul en cours...</div>
 
     <div v-else>
+      <div v-if="results.length">
+        <div class="card">
+          <h2>Tu es proche de</h2>
+          <h1 class="winner">{{ topParty }}</h1>
+        </div>
 
-      <div class="card">
-        <h2>Tu es proche de</h2>
-        <h1 class="winner">{{ topParty }}</h1>
-      </div>
+        <canvas ref="chartCanvas"></canvas>
 
-      <canvas ref="chartCanvas"></canvas>
-
-      <div class="list">
-        <div v-for="(result, index) in results" :key="index" class="item">
-          <span>{{ result.party.name }}</span>
-          <span>{{ Number(result.score).toFixed(1) }}%</span>
+        <div class="list">
+          <div v-for="(result, index) in results" :key="index" class="item">
+            <span>{{ result.party.name }}</span>
+            <span>{{ Number(result.score).toFixed(1) }}%</span>
+          </div>
         </div>
       </div>
 
+      <div v-else>
+        <p>Aucun résultat disponible.</p>
+      </div>
     </div>
   </div>
 </template>
@@ -51,33 +55,38 @@ export default {
     const sessionId = this.state.sessionId
 
     if (!sessionId) {
-      alert("Session perdue. Relance le quiz.")
+      alert('Session perdue. Relance le quiz.')
       this.state.page = 'quiz'
       return
     }
 
     try {
-      const res = await fetch(`http://127.0.0.1:8000/api/results/${sessionId}`)
+      const res = await fetch(`/api/results/${sessionId}`)
+
+      if (!res.ok) {
+        throw new Error('Erreur HTTP lors du calcul des résultats')
+      }
 
       const data = await res.json()
 
-      this.results = data
+      this.results = Array.isArray(data) ? data : []
       this.loading = false
 
-      this.$nextTick(() => {
-        this.renderChart()
-      })
-
+      if (this.results.length) {
+        this.$nextTick(() => {
+          this.renderChart()
+        })
+      }
     } catch (error) {
       console.error(error)
-      alert("Erreur lors du calcul des résultats")
+      alert('Erreur lors du calcul des résultats')
       this.loading = false
     }
   },
 
   methods: {
     renderChart() {
-      if (!this.$refs.chartCanvas) return
+      if (!this.$refs.chartCanvas || !this.results.length) return
 
       const labels = this.results.map(r => r.party.short_name)
       const data = this.results.map(r => Number(r.score))
@@ -88,10 +97,12 @@ export default {
         type: 'bar',
         data: {
           labels,
-          datasets: [{
-            label: 'Compatibilité (%)',
-            data
-          }]
+          datasets: [
+            {
+              label: 'Compatibilité (%)',
+              data
+            }
+          ]
         }
       })
     }
