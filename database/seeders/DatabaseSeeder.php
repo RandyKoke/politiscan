@@ -2,46 +2,41 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use App\Models\Question;
 use App\Models\Party;
 use App\Models\Position;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-
 
 class DatabaseSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
         // -----------------------------
         // PARTIS POLITIQUES
         // -----------------------------
+        $ps = Party::updateOrCreate(
+            ['short_name' => 'PS'],
+            ['name' => 'Parti Socialiste']
+        );
 
-        $ps = Party::create([
-            'name' => 'Parti Socialiste',
-            'short_name' => 'PS',
-        ]);
+        $mr = Party::updateOrCreate(
+            ['short_name' => 'MR'],
+            ['name' => 'Mouvement Réformateur']
+        );
 
-        $mr = Party::create([
-            'name' => 'Mouvement Réformateur',
-            'short_name' => 'MR',
-        ]);
+        $ecolo = Party::updateOrCreate(
+            ['short_name' => 'ECOLO'],
+            ['name' => 'Ecolo']
+        );
 
-        $ecolo = Party::create([
-            'name' => 'Ecolo',
-            'short_name' => 'ECOLO',
-        ]);
-
-        $ptb = Party::create([
-            'name' => 'PTB',
-            'short_name' => 'PTB',
-        ]);
+        $ptb = Party::updateOrCreate(
+            ['short_name' => 'PTB'],
+            ['name' => 'PTB']
+        );
 
         // -----------------------------
         // QUESTIONS
         // -----------------------------
-
         $questions = [
             "L'État doit augmenter les impôts pour financer les services publics",
             "La Belgique doit sortir du nucléaire",
@@ -58,45 +53,64 @@ class DatabaseSeeder extends Seeder
         $questionModels = [];
 
         foreach ($questions as $text) {
-            $questionModels[] = Question::create([
-                'text' => $text
-            ]);
+            $questionModels[] = Question::updateOrCreate(
+                ['text' => $text],
+                [
+                    'category' => null,
+                    'weight' => 1
+                ]
+            );
         }
 
         // -----------------------------
         // POSITIONS DES PARTIS
         // (-2 = pas d'accord, +2 = d'accord)
         // -----------------------------
+        $psPositions = [2, 1, -1, 0, 2, 2, 2, 2, 0, 2];
+        $mrPositions = [-1, -1, 2, 2, -1, -1, -1, 1, 2, -1];
+        $ecoloPositions = [1, 2, -1, -1, 1, 1, 1, 2, -1, 1];
+        $ptbPositions = [2, 1, -2, -1, 2, 2, 2, 2, -1, 2];
 
         foreach ($questionModels as $index => $question) {
+            Position::updateOrCreate(
+                [
+                    'party_id' => $ps->id,
+                    'question_id' => $question->id,
+                ],
+                [
+                    'position_value' => $psPositions[$index]
+                ]
+            );
 
-            // PS
-            Position::create([
-                'party_id' => $ps->id,
-                'question_id' => $question->id,
-                'position_value' => [2, 1, -1, 0, 2, 2, 2, 2, 0, 2][$index]
-            ]);
+            Position::updateOrCreate(
+                [
+                    'party_id' => $mr->id,
+                    'question_id' => $question->id,
+                ],
+                [
+                    'position_value' => $mrPositions[$index]
+                ]
+            );
 
-            // MR
-            Position::create([
-                'party_id' => $mr->id,
-                'question_id' => $question->id,
-                'position_value' => [-1, -1, 2, 2, -1, -1, -1, 1, 2, -1][$index]
-            ]);
+            Position::updateOrCreate(
+                [
+                    'party_id' => $ecolo->id,
+                    'question_id' => $question->id,
+                ],
+                [
+                    'position_value' => $ecoloPositions[$index]
+                ]
+            );
 
-            // ECOLO
-            Position::create([
-                'party_id' => $ecolo->id,
-                'question_id' => $question->id,
-                'position_value' => [1, 2, -1, -1, 1, 1, 1, 2, -1, 1][$index]
-            ]);
-
-            // PTB
-            Position::create([
-                'party_id' => $ptb->id,
-                'question_id' => $question->id,
-                'position_value' => [2, 1, -2, -1, 2, 2, 2, 2, -1, 2][$index]
-            ]);
+            Position::updateOrCreate(
+                [
+                    'party_id' => $ptb->id,
+                    'question_id' => $question->id,
+                ],
+                [
+                    'position_value' => $ptbPositions[$index]
+                ]
+            );
         }
     }
 }
