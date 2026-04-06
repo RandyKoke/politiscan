@@ -4,7 +4,7 @@
       <span class="hero-badge">PolitiScan - version MVP de mon TFE</span>
       <h1 class="page-title">Bienvenue sur PolitiScan</h1>
       <p class="page-subtitle">
-        Découvre le parti politique le plus proche de tes idées en répondant à un questionnaire simple,
+        Découvre le parti politique francophone le plus proche de tes idées en répondant à un questionnaire simple,
         rapide et interactif.
       </p>
 
