@@ -1,16 +1,66 @@
 <template>
-  <div>
-    <h1>Créer un compte</h1>
+  <div class="page-shell">
+    <div class="card-shell">
+      <span class="hero-badge">Créer un compte</span>
+      <h1 class="page-title">Rejoins PolitiScan</h1>
+      <p class="page-subtitle">
+        Crée ton compte pour lancer le questionnaire et consulter ton résultat politique.
+      </p>
 
-    <input v-model="name" placeholder="Nom">
-    <input v-model="email" placeholder="Email">
-    <input v-model="password" placeholder="Mot de passe">
+      <div class="form-group">
+        <label class="input-label" for="name">Nom</label>
+        <input
+          id="name"
+          v-model="name"
+          class="text-input"
+          type="text"
+          placeholder="Ton nom"
+          autocomplete="name"
+        />
+      </div>
 
-    <button @click="register">S'inscrire</button>
+      <div class="form-group">
+        <label class="input-label" for="email">Adresse email</label>
+        <input
+          id="email"
+          v-model="email"
+          class="text-input"
+          type="email"
+          placeholder="tonemail@example.com"
+          autocomplete="email"
+        />
+      </div>
 
-    <p>{{ message }}</p>
+      <div class="form-group">
+        <label class="input-label" for="password">Mot de passe</label>
+        <input
+          id="password"
+          v-model="password"
+          class="text-input"
+          type="password"
+          placeholder="Minimum 6 caractères"
+          autocomplete="new-password"
+        />
+      </div>
 
-    <button @click="goToLogin">Déjà un compte ? Se connecter</button>
+      <button class="btn btn-primary" @click="register">
+        S'inscrire
+      </button>
+
+      <div class="link-row">
+        <button class="btn btn-secondary" @click="goToLogin">
+          Déjà un compte ? Se connecter
+        </button>
+      </div>
+
+      <p
+        v-if="message"
+        class="message"
+        :class="messageType === 'success' ? 'message-success' : 'message-error'"
+      >
+        {{ message }}
+      </p>
+    </div>
   </div>
 </template>
 
@@ -22,16 +72,21 @@ export default {
     const state = inject('state')
     return { state }
   },
+
   data() {
     return {
       name: '',
       email: '',
       password: '',
-      message: ''
+      message: '',
+      messageType: 'error'
     }
   },
+
   methods: {
     async register() {
+      this.message = ''
+
       try {
         const res = await fetch('/api/register', {
           method: 'POST',
@@ -48,17 +103,21 @@ export default {
         const data = await res.json()
 
         if (res.ok) {
-          this.message = "Compte créé avec succès"
+          this.message = 'Compte créé avec succès'
+          this.messageType = 'success'
           this.state.page = 'login'
         } else {
-          this.message = data.message
+          this.message = data.message || 'Impossible de créer le compte'
+          this.messageType = 'error'
         }
-
       } catch (err) {
-        this.message = "Erreur serveur"
+        this.message = 'Erreur serveur'
+        this.messageType = 'error'
       }
     },
+
     goToLogin() {
+      this.message = ''
       this.state.page = 'login'
     }
   }

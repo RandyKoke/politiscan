@@ -12,7 +12,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // -----------------------------
-        // PARTIS POLITIQUES
+        // Les différents partis politiques francophones sauf les Engagés
         // -----------------------------
         $ps = Party::updateOrCreate(
             ['short_name' => 'PS'],
@@ -63,7 +63,7 @@ class DatabaseSeeder extends Seeder
         }
 
         // -----------------------------
-        // POSITIONS DES PARTIS
+        // Les différentes positions des partis sur les questions que j'ai retenues
         // (-2 = pas d'accord, +2 = d'accord)
         // -----------------------------
         $psPositions = [2, 1, -1, 0, 2, 2, 2, 2, 0, 2];

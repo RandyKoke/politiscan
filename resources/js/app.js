@@ -1,15 +1,26 @@
-import { createApp, reactive } from 'vue'
+import { createApp, reactive, watch } from 'vue'
 
 import Login from './pages/Login.vue'
 import Register from './pages/Register.vue'
 import Quiz from './pages/Quiz.vue'
 import Result from './pages/Result.vue'
 
-// state global avec persistance
 const state = reactive({
     page: 'login',
+    user: null,
     sessionId: localStorage.getItem('sessionId') || null
 })
+
+watch(
+    () => state.sessionId,
+    (value) => {
+        if (value) {
+            localStorage.setItem('sessionId', value)
+        } else {
+            localStorage.removeItem('sessionId')
+        }
+    }
+)
 
 const app = createApp({
     setup() {

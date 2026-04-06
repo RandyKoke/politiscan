@@ -1,24 +1,54 @@
 <template>
-  <div>
-    <h1>Questionnaire</h1>
+  <div class="quiz-layout">
+    <div class="quiz-card">
+      <span class="hero-badge">Questionnaire</span>
+      <h1 class="question-title">Exprime ton positionnement</h1>
 
-    <div v-if="loading">Chargement...</div>
+      <div v-if="loading" class="helper-box">
+        Chargement du questionnaire...
+      </div>
 
-    <div v-else-if="!questions.length">
-      <p>Aucune question disponible.</p>
-    </div>
+      <div v-else-if="!questions.length" class="helper-box">
+        Aucune question disponible.
+      </div>
 
-    <div v-else>
-      <p><strong>Question {{ currentIndex + 1 }} / {{ questions.length }}</strong></p>
+      <div v-else>
+        <div class="progress-meta">
+          <span>Question {{ currentIndex + 1 }} sur {{ questions.length }}</span>
+          <span>{{ progressPercent }}%</span>
+        </div>
 
-      <h2>{{ currentQuestion.text }}</h2>
+        <div class="progress-bar">
+          <div
+            class="progress-bar-fill"
+            :style="{ width: progressPercent + '%' }"
+          ></div>
+        </div>
 
-      <div style="margin-top:20px;">
-        <button @click="answer(-2)">Pas du tout d'accord</button>
-        <button @click="answer(-1)">Pas d'accord</button>
-        <button @click="answer(0)">Neutre</button>
-        <button @click="answer(1)">D'accord</button>
-        <button @click="answer(2)">Tout à fait d'accord</button>
+        <p class="page-subtitle">
+          Réponds selon ton degré d'accord. Le résultat final compare tes réponses avec les positions
+          des partis intégrés dans ce MVP.
+        </p>
+
+        <p class="question-text">{{ currentQuestion.text }}</p>
+
+        <div class="answer-grid">
+          <button class="btn btn-answer" @click="answer(-2)">
+            Pas du tout d'accord
+          </button>
+          <button class="btn btn-answer" @click="answer(-1)">
+            Pas d'accord
+          </button>
+          <button class="btn btn-answer" @click="answer(0)">
+            Neutre
+          </button>
+          <button class="btn btn-answer" @click="answer(1)">
+            D'accord
+          </button>
+          <button class="btn btn-answer" @click="answer(2)">
+            Tout à fait d'accord
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -45,6 +75,11 @@ export default {
   computed: {
     currentQuestion() {
       return this.questions[this.currentIndex] || null
+    },
+
+    progressPercent() {
+      if (!this.questions.length) return 0
+      return Math.round(((this.currentIndex + 1) / this.questions.length) * 100)
     }
   },
 
